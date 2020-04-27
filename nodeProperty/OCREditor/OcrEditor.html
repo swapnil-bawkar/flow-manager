@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+	<title>Structured Document Computer Vision</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link href="OcrStyle.css" media="screen" rel="stylesheet" type="text/css" />
+	<link href="resources/jquery.selectareas.css" media="screen" rel="stylesheet" type="text/css" />
+	<!--[if lte IE 8]><link href="../resources/jquery.selectareas.ie8.css" media="screen" rel="stylesheet" type="text/css" /> <![endif]-->
+	<script src="jquery-1.11.3.min.js" type="text/javascript"></script>
+	<script src="jquery.selectareas.js" type="text/javascript"></script>
+	<script src="OcrOperation.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<table style = "width : 100%">
+			<tr>
+				<td class="actions">
+					<nav class="navbar navbar-default navbar-fixed-top">
+						<div class="row">
+							<div class="navbar-header paddingTop">
+								<h1>Structured Document Computer Vision</h1>
+							</div>
+						</div>
+						
+							<table  style = "width : 100%; table-layout: fixed">
+								<tr style="width: 100%; height: 32px;">
+									<td style="width:340px!Important">OCR Engine :
+										<select style="width: 250px; height: 32px;" id="node-input-OCREngine">
+											<option value="Tesserect" selected>Tesseract</option>
+											<option value="IronOcr">IronOcr</option>
+											<option value="Kofax">Kofax</option>
+										</select>
+									</td>
+									<td >
+										<!-- <input type="button" id="btnViewRel" value="Display Coordinates" class="actionOn" /> -->
+										<input type="button" id="btnReset" value="Reset" class="btn btn-primary" />
+										<input type="button" id="btnSave" value="Save" class="btn btn-primary" />
+										<input type="button" id="btnGetData" class="btn btn-primary" value="Test OCR" />
+										<input type="button" id="btnToggleField" class="btn btn-primary" value="Hide Fields" />
+										<input type="button" id="btnClose" value="Close" class="btn btn-primary" onclick="javascript:window.close()" />
+										<label id="lblAngle"/>
+										<!-- <input type="button" id="btnSave" value="Save Coordinates" /> -->
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2" style="padding-top:10px;">
+										<span id="spnMessage"></span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<div id="result" style="display:none">
+											<table>
+												<tr>
+													<td>
+														<div id="output" class='output'></div>
+														<a>
+															<div id="outputCls">X</div>
+														</a>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+							</table>
+						
+					</nav>					
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="image-decorator">
+						<img alt="Image principale" id='example' />
+						
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	
+	<script type="text/javascript">
+		var wcfLocation = "http://localhost:5000/OCROperations.svc/";  //window.location.host +
+		var imageUrl = GetURLParameter("id");  //GUID
+		var precheck = false;
+		
+		$(document).ready(function () {
+			var FilePath = "http://localhost:5000/OCRFiles/" + imageUrl + ".jpg";
+			debugger;
+			if (imageUrl != "") {
+					
+					$('#example').attr("src", FilePath);
+					
+					var x = getconfig(imageUrl); //Check Configuration File
+					var getangle;
+					var areaArr = JSON.parse(x);
+						
+					if (FilePath.substring(FilePath.length-4) ==".pdf" ){ 
+							if (areaArr.OCR.DefaultPdfConvertFormat !="")
+							{	
+								localStorage.removeItem(imageUrl);
+								imageUrl= GetImageFormat(imageUrl,areaArr.OCR.DefaultPdfConvertFormat )
+							
+								var FilePath = "http://localhost:5000/OCRFiles/" +  imageUrl + ".jpg";
+								$('#example').attr("src", FilePath);
+							}
+					}
+					else {
+							// Detection Angle
+							if (areaArr.OCR.DefaultAngleDetection=="True")
+							{
+								getangle = GetImageAngle(imageUrl,areaArr.OCR.DefaultAngleSet,areaArr.OCR.DefaultCheckBoxLoad);
+								
+								if ( (getangle[0] > "0"   &&  getangle[0] < "360") || (getangle[0] < "0")) {
+								
+									$('#lblAngle').text("Image is " + getangle[0] + " Degree Tinted");
+									//Set Angle
+									if (areaArr.OCR.DefaultAngleSet=="True")
+									{
+											
+											localStorage.removeItem(imageUrl);
+											SetImageAngle(imageUrl, parseFloat(getangle[0]), parseInt(getangle[1]));
+											var FilePath = "http://localhost:5000/OCRFiles/" +  imageUrl + ".jpg";
+											$('#example').attr("src", FilePath);
+										
+									}
+								}
+							}
+
+							if (areaArr.OCR.DefaultCheckBoxLoad == "True")
+							{ 	
+								SendCropAreaRequest(imageUrl); // Call Function on load to check check box
+							}
+							
+						}
+						
+						var jsonStr = localStorage.getItem(imageUrl);
+						LoadSelectAreas(jsonStr);
+						
+			}
+
+			$('#btnToggleField').click(function () {
+				
+				if ($(this).attr("value")=="Display Fields"){
+					$( ".label-area" ).show();
+					$( ".delete-area" ).show();
+					$(this).attr("value","Hide Fields");
+				}
+				else{
+					$( ".label-area" ).hide();
+					$( ".delete-area" ).hide();
+					$(this).attr("value","Display Fields");
+				}
+
+			});
+
+			$('#btnViewRel').click(function () {
+				var areas = $('img#example').selectAreas('relativeAreas');
+				displayAreas(areas);
+			});
+
+			$('#btnReset').click(function () {
+				//output("Select Area");
+				$('#result').hide("slow");
+				$('.image-decorator').removeAttr("style");
+				$('img#example').selectAreas('reset');
+			});
+
+			$('#btnSave').click(function () {
+				var areas = $('img#example').selectAreas('relativeAreas');
+				/*displayAreas(areas);*/
+				var jsonObj = getAreaInJSON(areas);
+
+				if (typeof jsonObj != "undefined" && jsonObj.length > 0) {
+					//var imageUrl = GetURLParameter("id");
+					var coorsJSON = JSON.stringify(jsonObj);
+
+					localStorage.removeItem(imageUrl);
+					localStorage.setItem(imageUrl, coorsJSON);    /// Storing Data by GUID		
+					$('#spnMessage').show().text("Selected areas stored successfully.");
+					setTimeout(() => {
+						$('#result').hide('slow');//$('#outputCls').show();
+						$('.image-decorator').removeAttr("style");
+						$("#spnMessage").hide('slow');
+					}, 2000);
+				}
+			});
+			
+		$('#btnGetData').click(function () {
+		
+			//window.opener.postMessage("uploadFile", "*");
+			var areas = $('img#example').selectAreas('relativeAreas');
+			//updated by Rashad
+			if (precheck==false){
+				var coorsJSON = JSON.stringify(areas);
+				localStorage.setItem(imageUrl, coorsJSON); 
+			}
+			///
+			var jsonObj = getAreaInJSON(areas);
+			
+			if (typeof jsonObj != "undefined" && jsonObj.length > 0) {
+				//var imageUrl = GetURLParameter("id");
+				var coorsJSON = JSON.stringify(jsonObj);
+
+				localStorage.removeItem(imageUrl);
+				localStorage.setItem(imageUrl, coorsJSON);    /// Storing Data by GUID				
+				$('#output').attr("style", "display:block");
+				$('#result').attr("style", "display:block");
+				$('.image-decorator').attr("style","margin-top:80px");
+				displayAreas(jsonObj);
+				SendCoordinateRequest(imageUrl);
+			}
+		});
+
+		$('#outputCls').click(function () {
+			$('#result').hide('slow');
+			$(this).hide();
+			$('.image-decorator').removeAttr("style");
+		});
+	})	
+	</script>
+</body>
+
+</html>

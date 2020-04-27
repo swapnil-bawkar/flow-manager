@@ -1,0 +1,52 @@
+.select-areas-overlay {
+	background-color:lightgray;
+	overflow: hidden;
+	position: absolute;
+}
+.blurred {
+	filter: url("/filters.svg#blur3px");
+	-webkit-filter: blur(0.07em);
+	-moz-filter:blur(0.07em);
+	-o-filter: blur(0.07em);
+	filter: blur(0.07em);
+}
+
+.select-areas-outline {
+	background: #fff url('outline.gif');
+	overflow: hidden;
+}
+.select-areas-outline-load {
+	background: #fff url('outlined1.gif');
+	overflow: hidden;
+}
+.select-areas-resize-handler {
+	background-color: #000;
+	border: 1px #fff solid;
+	height: 8px;
+	width: 8px;
+	overflow: hidden;
+}
+
+.select-areas-delete-area {
+	background: url('bt-delete.png');
+	cursor: pointer;
+	height: 16px;
+	width: 16px;
+}
+.delete-area {
+	position: absolute;
+	cursor: pointer;
+	padding: 5px;
+}
+.select-areas-label-area {
+	cursor: pointer;
+	height: 16px;
+	width: 80px;
+	background-color:antiquewhite;
+	margin: 10px;
+}
+.label-area {
+	position: absolute;
+	cursor: pointer;
+	padding: 5px;
+}

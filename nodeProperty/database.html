@@ -1,0 +1,54 @@
+
+<script type="text/javascript">
+getJson();
+addScript(); 
+
+//------ Customized Functions Added  -------------------
+function getJson()
+{
+    var jsonDataNew;
+    
+    var promises = $.ajax({
+        dataType: "json",
+        url: "./red/custom-database-params.json",
+        success: function(json){
+            jsonDataNew = json;
+        }
+    });
+
+    promises.done(function(){
+        RED.nodes.registerType('database',
+        {
+        category: 'Data Input',
+        color: '#87A980',
+        defaults: jsonDataNew,
+        inputs:1,
+        outputs:1,
+        icon: "arrow-in.png",
+        label: function() {
+            return this.name||"database";
+        }
+        });
+    });
+}
+    
+function addScript() 
+{
+    $.ajax({
+        dataType: "html",
+        url: "./red/custom-database-view.html",
+        success: function(html){
+            var s = document.createElement( 'script' );
+            s.setAttribute( 'type', "text/x-red" );
+            s.setAttribute( 'data-template-name', 'database' );
+            s.innerHTML = html;
+            document.body.appendChild(s);
+        }
+    });
+}
+
+</script>
+<!-- <input type="text" id="name" placeholder="Name"> -->
+<script type="text/x-red" data-help-name="database">
+    <p>This node will allow to open any database by using connection string. </p>
+</script>

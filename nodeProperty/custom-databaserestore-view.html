@@ -1,0 +1,200 @@
+
+
+    
+    <div class="form-row">
+        <label for="ServerName">
+            <i class="icon-tag"></i> Server Name </label>
+        <input type="text" id="ServerName" placeholder="Server Name">
+    </div>
+
+    <div class="form-row">
+        <label for="DatabaseName">
+            <i class="icon-tag"></i> Database Name </label>
+        <input type="text" id="DatabaseName" placeholder="Database Name">
+    </div>
+
+    <div class="form-row">
+        <label for="UserId">
+            <i class="icon-tag"></i> User Id </label>
+        <input type="text" id="UserId" placeholder="UserId">
+    </div>
+
+    <div class="form-row">
+        <label for="Password">
+            <i class="icon-tag"></i> Password </label>
+        <input type="text" id="Password" placeholder="Password">
+    </div>
+
+    <div class="form-row">
+        <label for="RestoreLocation">
+            <i class="icon-tag"></i> Restore Location </label>
+        <input type="text" id="RestoreLocation" placeholder="Restore Location">
+    </div>
+
+    <div class="form-row" style="background-color: rgb(233, 240, 240); border-radius: 10px">
+            <label style="width: 500px; text-align: center; padding-top: 5px;">Exception Handling</label>
+    </div>
+
+    <div class="form-row">
+            <label  for="Action">
+                <i class="icon-tag"></i> Action </label>     
+            <select style="width: 330px;" id="Action">
+                <option value="" disabled selected>Select Action</option>
+                <option value="Halt">Halt</option>            
+                <option value="Continue">Continue</option>           
+            </select>
+        </div>
+
+    <div class="form-row">
+                <label for="RetryCount">
+                    <i class="icon-tag"></i> Retry Count </label>     
+                <select style="width: 330px;" id="RetryCount">
+                    <option value="" disabled selected>Select Retry Count</option>
+                    <option value="1">1</option>            
+                    <option value="2">2</option>     
+                    <option value="3">3</option>      
+                </select>
+    </div>
+    <hr>
+    <div class="form-row">
+            <label style="width: 130px;" for="ActionTimeOut">
+                <i class="icon-tag"></i> Action Time Out </label>
+            <input style="width: 60px;" type="number" min="0" id="ActionTimeOut" placeholder="Action Time Out">
+            <label>Minutes</label>        
+    </div>
+
+
+<script>
+
+function getBase64(file) {
+        if (file != null) {
+            var base64String = "";
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                base64String = reader.result;
+            }
+            reader.onloadend = function () {
+                localStorage.setItem("imgFile", reader.result);
+            }
+            reader.onerror = function (error) {
+                console.log("Error :" + error);
+            }
+        }
+    }
+    function XMLHttpRequestCall(file)
+        {
+            //debugger;
+            var url='http://localhost:5000/SpeechToText.svc/SpeechToText?audioFile=D:ClientAgent\\AudioFiles\\whatstheweatherlike.wav';
+            var xhr = new XMLHttpRequest();
+            xhr.crossDomain = true;
+            xhr.open('GET', url, true);            
+            xhr.onload = function () {
+                //debugger;
+                var response = JSON.parse(xhr.responseText);
+                if(xhr.readyState==4 && xhr.status==200)
+                {
+                    document.getElementById("OutPutText").value = response.DisplayText;
+                    //console.table(response);
+                }
+            }
+            xhr.send(null);
+        }
+
+        function SendEmail(cognitiveResponse){
+            var emailInput = document.getElementById("dvsuccess");
+            emailInput.style.display="block";  
+
+            var email=document.getElementById("EmailId").value;
+
+            var url="http://localhost:5000/SpeechToText.svc/SendEmail/"+email+"/"+cognitiveResponse;
+            var xhr = new XMLHttpRequest();
+            xhr.crossDomain = true;
+            xhr.open('GET', url, true);            
+            xhr.onload = function () {
+                //debugger;
+                var response = JSON.parse(xhr.responseText);
+                if(xhr.readyState==4 && xhr.status==200)
+                {                                    
+                    
+                }
+            }
+            xhr.send(null);
+        }
+
+        function SendEmails(cognitiveResponse){
+            var emailInput = document.getElementById("dvsuccess");
+            emailInput.style.display="block";  
+
+            var email=document.getElementById("EmailId").value;           
+            
+            var url="http://localhost:5000/SpeechToText.svc/SendEmails";
+            //var data= '{"emailId":"' + email + '","cognitiveResponse":"' + cognitiveResponse+'"}';
+            var xhr = new XMLHttpRequest();
+            xhr.crossDomain = true;
+            xhr.open('POST', url, true);    
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");   
+            xhr.onload = function () {
+                //debugger;
+                var response = JSON.parse(xhr.responseText);
+                if(xhr.readyState==4 && xhr.status==200)
+                {                                    
+                    
+                }
+            }
+            //xhr.send(data);
+            xhr.send(JSON.stringify({ emailId: email, cognitiveResponse: cognitiveResponse }));
+        }
+        function uploadFile() {
+
+            document.getElementById("btn-preview").value = 'Processing...';
+            //debugger;
+            var fileInput = document.getElementById("templateFileUploader").files[0]; // $('#templateFileUploader')[0]; // 
+            var reader = new FileReader();
+            reader.onload = function (result) {
+                //debugger;
+                var fileData = '';
+                var byteArray = new Uint8Array(result.target.result)
+                for (var i = 0; i < byteArray.byteLength; i++) {
+                    fileData += String.fromCharCode(byteArray[i])
+                }
+                var url ='';
+                var engine = document.getElementById("Engine").value;
+                //alert(engine);
+                //if(engine == "Microsoft") url = 'http://localhost:33427/SpeechToText.svc/UploadStream'+document.getElementById("TemplatePath").value;
+               // else  url = 'http://localhost:33427/SpeechToText.svc/UploadStreamIBM/'+document.getElementById("TemplatePath").value;
+               url = 'http://localhost:5000/SpeechToText.svc/UploadStream/'+engine +'/' + document.getElementById("TemplatePath").value;
+                //url = 'http://localhost:33427/SpeechToText.svc/UploadStream/' + document.getElementById("TemplatePath").value;
+                var xhr = new XMLHttpRequest();
+                //debugger;
+                xhr.crossDomain = true;
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('Content-type', 'text/plain');
+                xhr.onload = function () {
+                    //debugger;
+                    var response = JSON.parse(xhr.responseText);
+                    if (xhr.readyState == 4 && xhr.status == 200) {                       
+                        //console.table(response);
+                        document.getElementById("btn-preview").value = 'Preview';
+                        document.getElementById("OutPutText").value = response.DisplayText;
+                        SendEmails(response.DisplayText);
+                    }
+                }  
+                xhr.send(byteArray);
+            };
+            reader.readAsArrayBuffer(fileInput);
+        }   
+
+    function openFileDialog() {
+        document.getElementById("templateFileUploader").click();
+    }
+
+    function getFilePath() {
+        var fileUploader = document.getElementById("templateFileUploader");
+        if (typeof fileUploader != "undefined" && fileUploader.files.length > 0) {
+            document.getElementById("TemplatePath").value = fileUploader.files[0].name;
+            document.getElementById("OutPutText").value = "";
+        }
+    }
+
+</script>

@@ -1,0 +1,299 @@
+<style>
+    .ClsInputType {
+        width: 5% !important;
+    }
+    
+    .dvError {
+        height: 18px;
+    }
+</style>
+<div id="dvsuccess" class="alert alert-success" style="display:none">
+    <strong>Success!</strong> Please check your inbox, an email is on the way.
+</div>
+
+
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="icon-tag"></i> Action </label>
+        <input type="text" disabled="disabled" id="node-input-name" placeholder="Action">
+    </div>
+    <div class="form-row">
+        <label for="node-input-label">
+            <i class="icon-tag"></i> Label </label>
+        <input type="text" id="node-input-label" placeholder="Label">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-Engine">
+            <i class="icon-tag"></i> Cognitive Engine </label>
+        <select style="width: 330px;" id="node-input-Engine">            
+            <option value="Microsoft">Microsoft Cognitive</option>
+            <option value="IBM">IBM Watson</option>
+        </select>
+    </div>
+
+
+    <div class="form-row">
+        <label for="node-input-Operation">
+            <i class="icon-tag"></i> Operation </label>
+        <select style="width: 330px;" id="node-input-Operation" class="selectpicker" multiple>            
+            <option value="Detect_Language" selected="selected">Detect Language</option>
+            <option value="Key_Phrases">Key Phrases</option>
+            <option value="Sentiment">Sentiment</option>
+            <!--<option value="Emotions">Emotions</option>            -->
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-EmailId"><i class="icon-tag"></i> Email Id </label>
+        <input type="email" id="node-input-EmailId" placeholder="Email Id">
+    </div>
+    <div class="form-row">
+        <label for="node-input-InputType"><i class="icon-tag"></i> Input </label>
+        <input type="radio" class="ClsInputType" name="InputType" checked value="File" onChange="GetRadioInputType('File')">File
+        <input type="radio" class="ClsInputType" name="InputType" value="Text" onChange="GetRadioInputType('Text')">Text
+    </div>
+
+    <div class="form-row" id="dvFile">
+        <label style="width: 130px;" for="node-input-templatepath">
+            <i class="icon-tag"></i> Audio File Path </label>
+        <input type="text" style="width: 285px;" id="node-input-TemplatePath" placeholder="Audio File Path">
+        <input type="button" style="width: 50px;" class="ui-button ui-widget ui-state-default" onclick="openFileDialog()" style="width:40px"
+            value="...">
+        <input type="file" style="display: none" onchange="getFilePath()" name="templateFileUploader" id="templateFileUploader">
+        <input type="hidden" id="node-input-GUID">
+    </div>
+    <div class="form-row" id="dvText" style="display: none">
+        <label style="width: 130px;" for="node-input-text">
+            <i class="icon-tag"></i> Text </label>
+        <textarea name="InputText" style="width: 335px;" id="node-input-InputText" style="width:450px" />
+    </div>
+    <div class="form-row">
+        <label style="width: 130px;" for="node-input-templatepath"></label>
+        <input type="button" id="btn-preview" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="Preview"
+            onclick="GetTextAnalysisResult()">
+    </div>
+    <div id="dverror" class="alert alert-danger dvError" style="display:none"></div>
+    <div class="form-row">
+        <label style="width: 130px;" for="node-input-text">
+            <i class="icon-tag"></i> Result </label>
+        <textarea name="OutPutText" style="width: 335px;" rows="5" id="node-input-OutPutText" style="width:450px" readonly="readonly"
+        />
+    </div>
+    <div class="form-row" style="background-color: rgb(233, 240, 240); border-radius: 10px">
+        <label style="width: 500px; text-align: center; padding-top: 5px;">Exception Handling</label>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-Action">
+                <i class="icon-tag"></i> Action </label>
+        <select style="width: 330px;" id="node-input-Action">
+                <option value="" disabled selected>Select Action</option>
+                <option value="Halt">Halt</option>            
+                <option value="Continue">Continue</option>           
+            </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-RetryCount">
+                    <i class="icon-tag"></i> Retry Count </label>
+        <select style="width: 330px;" id="node-input-RetryCount">
+                    <option value="" disabled selected>Select Retry Count</option>
+                    <option value="1">1</option>            
+                    <option value="2">2</option>     
+                    <option value="3">3</option>      
+                </select>
+    </div>
+    <hr>
+    <div class="form-row">
+        <label style="width: 130px;" for="node-input-ActionTimeOut">
+                <i class="icon-tag"></i> Action Time Out </label>
+        <input style="width: 60px;" type="number" id="node-input-ActionTimeOut" placeholder="Action Time Out">
+        <label>Minutes</label>
+    </div>
+
+
+<script>
+    function getBase64(file) {
+        if (file != null) {
+            var base64String = "";
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                base64String = reader.result;
+            }
+            reader.onloadend = function () {
+                localStorage.setItem("imgFile", reader.result);
+            }
+            reader.onerror = function (error) {
+                console.log("Error :" + error);
+            }
+        }
+    }
+    function XMLHttpRequestCall(file) {
+        var url = 'http://localhost:5000/SpeechToText.svc/SpeechToText?audioFile=D:ClientAgent\\AudioFiles\\whatstheweatherlike.wav';
+        var xhr = new XMLHttpRequest();
+        xhr.crossDomain = true;
+        xhr.open('GET', url, true);
+        xhr.onload = function () {
+            var response = JSON.parse(xhr.responseText);
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                document.getElementById("node-input-OutPutText").value = response.DisplayText;
+                //console.table(response);
+            }
+        }
+        xhr.send(null);
+    }
+
+    function SendEmail(cognitiveResponse) {
+        var emailInput = document.getElementById("dvsuccess");
+        emailInput.style.display = "block";
+
+        var email = document.getElementById("node-input-EmailId").value;
+
+        var url = "http://localhost:5000/SpeechToText.svc/SendEmail/" + email + "/" + cognitiveResponse;
+        var xhr = new XMLHttpRequest();
+        xhr.crossDomain = true;
+        xhr.open('GET', url, true);
+        xhr.onload = function () {
+            var response = JSON.parse(xhr.responseText);
+            if (xhr.readyState == 4 && xhr.status == 200) {
+
+            }
+        }
+        xhr.send(null);
+    }
+    function GetTextAnalysisResult() {
+        document.getElementById("btn-preview").value = 'Processing...';
+        var InputType = document.querySelector('input[name = "InputType"]:checked').value;
+        var nodeinputOperation = document.getElementById("node-input-Operation");
+        var selectedOption = getSelectValues(nodeinputOperation);
+        var dvError = document.getElementById("dverror");
+        if (selectedOption != null && selectedOption.length != 0) {
+            var GUID = document.getElementById("node-input-GUID").value;
+            var sText = document.getElementById("node-input-InputText").value;
+            if (InputType == "Text") {
+                if (sText != "")
+                    GetAnalysisRequest(InputType, GUID, sText, selectedOption);
+                else {
+                    dvError.innerText = "Please enter text to analysis";
+                    dvError.style.display = "block";
+                }
+            } else if (InputType == "File") {
+                if (GUID != "")
+                    GetAnalysisRequest(InputType, GUID, sText, selectedOption);
+                else {
+                    dvError.innerText = "Please select file to analysis";
+                    dvError.style.display = "block";
+                }
+            }
+        } else {
+            dvError.innerText = "Please select operation";
+            dvError.style.display = "block";
+        }
+        setTimeout(function () {
+            document.getElementById("dverror").style.display = "none";
+            document.getElementById("btn-preview").value = 'Preview';
+        }, 4000);
+    }
+
+    function getSelectValues(select) {
+        var result = [];
+        var options = select && select.options;
+        var opt;
+
+        for (var i = 0, iLen = options.length; i < iLen; i++) {
+            opt = options[i];
+
+            if (opt.selected && !opt.disabled) {
+                result.push(opt.value || opt.text);
+            }
+        }
+        return result;
+    }
+
+    function UploadAudioFile() {
+        //debugger
+        var fileInput = document.getElementById("templateFileUploader").files[0]; // $('#templateFileUploader')[0]; // 
+        var reader = new FileReader();
+        reader.onload = function (result) {
+            //debugger
+            var fileData = '';
+            var byteArray = new Uint8Array(result.target.result)
+            for (var i = 0; i < byteArray.byteLength; i++) {
+                fileData += String.fromCharCode(byteArray[i])
+            }
+            var url = 'http://localhost:5000/SentimentsAnalysisService.svc/UploadStream';
+            var xhr = new XMLHttpRequest();
+
+            xhr.crossDomain = true;
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-type', 'text/plain');
+            xhr.onload = function () {
+                //debugger
+                var response = JSON.parse(xhr.responseText);
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    //console.table(response);
+                    document.getElementById("btn-preview").removeAttribute("disabled");
+                    document.getElementById("btn-preview").value = 'Preview';
+                    //document.getElementById("node-input-OutPutText").value = response.DisplayText;
+                    document.getElementById("node-input-GUID").value = response;
+                    //SendEmail(response);                    
+                }
+            }
+            xhr.send(byteArray);
+        };
+        reader.readAsArrayBuffer(fileInput);
+    }
+
+    function GetAnalysisRequest(InputType, GUID, sText, Operation) {
+        //debugger
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "http://localhost:5000/SentimentsAnalysisService.svc/GetAnalysisResult",
+            data: '{"InputType":"' + InputType + '","Operation":"' + Operation + '","Guid": "' + GUID + '","Text":"' + sText + '"}',
+            processData: false,
+            dataType: "json",
+            success: function (response) {
+                if (response != null && response != "") {
+                    document.getElementById("node-input-OutPutText").value = response;
+                }
+                //alert(response);
+                document.getElementById("btn-preview").value = 'Preview';
+            },
+            error: function (a, b, c) {
+                //alert(a.responseText);
+            },
+            complete: function () {
+                document.getElementById("btn-preview").value = 'Preview';
+            }
+
+        });
+    }
+
+    function openFileDialog() {
+        document.getElementById("templateFileUploader").click();
+    }
+
+    function getFilePath() {
+        var fileUploader = document.getElementById("templateFileUploader");
+        if (typeof fileUploader != "undefined" && fileUploader.files.length > 0) {
+            document.getElementById("node-input-TemplatePath").value = fileUploader.files[0].name;
+            document.getElementById("btn-preview").setAttribute("disabled", "disabled");
+            document.getElementById("btn-preview").value = "Please wait...";
+            UploadAudioFile();
+        }
+    }
+
+    function GetRadioInputType(obj) {
+        document.getElementById("dvFile").style.display = "none";
+        document.getElementById("dvText").style.display = "none";
+        if (obj == "File")
+            document.getElementById("dvFile").style.display = "block";
+        else
+            document.getElementById("dvText").style.display = "block";
+
+    }
+
+</script>

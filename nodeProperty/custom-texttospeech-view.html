@@ -1,0 +1,178 @@
+
+<div id="dvsuccess" class="alert alert-success" style="display:none">
+    <strong>Success!</strong> Please check your inbox, an email is on the way.
+  </div>
+
+   
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="icon-tag"></i> Action </label>
+        <input type="text" disabled="disabled" id="node-input-name" placeholder="Action">
+    </div>
+    <div class="form-row">
+        <label for="node-input-label">
+            <i class="icon-tag"></i> Label </label>
+        <input type="text" id="node-input-label" placeholder="Label">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-Engine">
+            <i class="icon-tag"></i> Cognitive Engine </label>
+        <select style="width: 330px;" id="node-input-Engine">            
+            <option value="Microsoft">Microsoft Cognitive</option>
+            <option value="IBM">IBM Watson</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-EmailId"><i class="icon-tag"></i> Email Id </label>
+        <input type="email"  id="node-input-EmailId" placeholder="Email Id">
+    </div>
+
+    <div class="form-row">
+        <label style="width: 130px;" for="node-input-InputText">
+            <i class="icon-tag"></i> Input Text </label>
+        <textarea name="InputText" style="width: 335px;" id="node-input-InputText" style="width:450px" />
+    </div>
+
+    <div class="form-row">
+        <label style="width: 130px;" for="node-input-templatepath"></label>
+        <input type="button" id="btn-download" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" value="Download Audio">
+    </div> 
+
+    <div class="form-row" style="background-color: rgb(233, 240, 240); border-radius: 10px">
+            <label style="width: 500px; text-align: center; padding-top: 5px;">Exception Handling</label>
+    </div>
+
+    <div class="form-row">
+            <label  for="node-input-Action">
+                <i class="icon-tag"></i> Action </label>     
+            <select style="width: 330px;" id="node-input-Action">
+                <option value="" disabled selected>Select Action</option>
+                <option value="Halt">Halt</option>            
+                <option value="Continue">Continue</option>           
+            </select>
+        </div>
+
+    <div class="form-row">
+                <label for="node-input-RetryCount">
+                    <i class="icon-tag"></i> Retry Count </label>     
+                <select style="width: 330px;" id="node-input-RetryCount">
+                    <option value="" disabled selected>Select Retry Count</option>
+                    <option value="1">1</option>            
+                    <option value="2">2</option>     
+                    <option value="3">3</option>      
+                </select>
+    </div>
+    <hr>
+    <div class="form-row">
+            <label style="width: 130px;" for="node-input-ActionTimeOut">
+                <i class="icon-tag"></i> Action Time Out </label>
+            <input style="width: 60px;" type="number" id="node-input-ActionTimeOut" placeholder="Action Time Out">
+            <label>Minutes</label>        
+    </div>
+
+
+<script>
+
+function getBase64(file) {
+        if (file != null) {
+            var base64String = "";
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                base64String = reader.result;
+            }
+            reader.onloadend = function () {
+                localStorage.setItem("imgFile", reader.result);
+            }
+            reader.onerror = function (error) {
+                console.log("Error :" + error);
+            }
+        }
+    }
+    function XMLHttpRequestCall(file)
+        {
+            debugger;
+            var url='http://localhost:5000/SpeechToText.svc/SpeechToText?audioFile=D:ClientAgent\\AudioFiles\\whatstheweatherlike.wav';
+            var xhr = new XMLHttpRequest();
+            xhr.crossDomain = true;
+            xhr.open('GET', url, true);            
+            xhr.onload = function () {
+                debugger;
+                var response = JSON.parse(xhr.responseText);
+                if(xhr.readyState==4 && xhr.status==200)
+                {
+                    document.getElementById("node-input-OutPutText").value = response.DisplayText;
+                    //console.table(response);
+                }
+            }
+            xhr.send(null);
+        }
+
+        function SendEmail(cognitiveResponse){
+            var emailInput = document.getElementById("dvsuccess");
+            emailInput.style.display="block";  
+
+            var email=document.getElementById("node-input-EmailId").value;
+
+            var url="http://localhost:5000/SpeechToText.svc/SendEmail/"+email+"/"+cognitiveResponse;
+            var xhr = new XMLHttpRequest();
+            xhr.crossDomain = true;
+            xhr.open('GET', url, true);            
+            xhr.onload = function () {
+                debugger;
+                var response = JSON.parse(xhr.responseText);
+                if(xhr.readyState==4 && xhr.status==200)
+                {                                    
+                    
+                }
+            }
+            xhr.send(null);
+        }
+        function uploadFile() {
+
+            document.getElementById("btn-preview").value = 'Processing...';
+            debugger;
+            var fileInput = document.getElementById("templateFileUploader").files[0]; // $('#templateFileUploader')[0]; // 
+            var reader = new FileReader();
+            reader.onload = function (result) {
+                debugger;
+                var fileData = '';
+                var byteArray = new Uint8Array(result.target.result)
+                for (var i = 0; i < byteArray.byteLength; i++) {
+                    fileData += String.fromCharCode(byteArray[i])
+                }
+                var url = 'http://localhost:5000/SpeechToText.svc/UploadStream';
+                var xhr = new XMLHttpRequest();
+
+                xhr.crossDomain = true;
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('Content-type', 'text/plain');
+                xhr.onload = function () {
+                    debugger;
+                    var response = JSON.parse(xhr.responseText);
+                    if (xhr.readyState == 4 && xhr.status == 200) {                       
+                        //console.table(response);
+                        document.getElementById("btn-preview").value = 'Preview';
+                        document.getElementById("node-input-OutPutText").value = response.DisplayText;
+                        SendEmail(response.DisplayText);
+                    }
+                }  
+                xhr.send(byteArray);
+            };
+            reader.readAsArrayBuffer(fileInput);
+        }   
+
+    function openFileDialog() {
+        document.getElementById("templateFileUploader").click();
+    }
+
+    function getFilePath() {
+        var fileUploader = document.getElementById("templateFileUploader");
+        if (typeof fileUploader != "undefined" && fileUploader.files.length > 0) {
+            document.getElementById("node-input-TemplatePath").value = fileUploader.files[0].name;
+        }
+    }
+
+</script>

@@ -1,0 +1,160 @@
+   
+    <div class="form-row">
+        <label  for="BeneficiaryName">
+            <i class="icon-tag"></i> Beneficiary Name </label>
+        <input style="width: 290px;" type="text" id="BeneficiaryName" placeholder="Name Of Beneficiary">
+    </div>   
+    <div class="form-row">
+            <label  for="BeneficiarySSN">
+                <i class="icon-tag"></i> Beneficiary SSN </label>
+            <input style="width: 290px;" type="text" id="BeneficiarySSN" placeholder="SSN">
+        </div> 
+    <div class="form-row">
+        <label  for="BeneficiaryDOB">
+            <i class="icon-tag"></i> Beneficiary DOB </label>
+        <input style="width: 290px;" type="date" id="BeneficiaryDOB" placeholder="DOB">
+    </div>
+
+    <div class="form-row">
+            <label  for="Relation">
+                <i class="icon-tag"></i> Relation </label>
+                <select style="width: 290px;" id="Relation">
+                        <option value="" disabled selected>Select beneficiary option</option>
+                        <option value="Spouse">Spouse</option>            
+                        <option value="Non-Spouse">Non-Spouse</option>                        
+                    </select>            
+    </div>    
+
+    <div class="form-row">
+        <label  for="BeneficiaryMailingAddress">
+            <i class="icon-tag"></i> Mailing Address </label>
+        <input style="width: 290px;" type="text" id="BeneficiaryMailingAddress" placeholder="Mailing Address">
+    </div>
+    <div class="form-row">
+        <label  for="BeneficiaryCity">
+            <i class="icon-tag"></i> City </label>
+        <input style="width: 290px;" type="text" id="BeneficiaryCity" placeholder="City">
+    </div>
+    <div class="form-row">
+        <label  for="BeneficiaryState">
+            <i class="icon-tag"></i> State </label>
+        <input style="width: 290px;" type="text" id="BeneficiaryState" placeholder="State">
+    </div>
+
+    <div class="form-row">
+        <label  for="BeneficiaryZipCode">
+            <i class="icon-tag"></i> Zip Code </label>
+        <input style="width: 290px;" type="text" id="BeneficiaryZipCode" placeholder="Zip Code">
+    </div>
+
+    <div class="form-row">
+            <label  for="TaxWithHolding">
+                <i class="icon-tag"></i> Tax With Holding </label>            
+            <select style="width: 290px;" id="TaxWithHolding">
+                    <option value="" disabled selected>Select beneficiary option</option>
+                    <option value="1">Do not withhold federal income tax from my distribution.</option>            
+                    <option value="2">I elect to have some % federal income tax withheld from... </option>  
+                    <option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp; my distribution(must be 10% or greater).Please enter % amount below.</option>                       
+                    <option value="3">In addition to the above percentage, I elect to have... </option>
+                    <option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp; some amount federal income tax withheld from my distribution.Please enter amount below.</option>                       
+                </select>  
+    
+        </div>
+
+    <div class="form-row">
+            <label  for="PercentFederalTax">
+                <i class="icon-tag"></i> % Federal Tax </label>
+            <input style="width: 290px;" type="text" id="PercentFederalTax" placeholder="Percent Federal Tax">
+    </div>
+
+    <div class="form-row">
+            <label  for="InCashFederalTax">
+                <i class="icon-tag"></i> Federal Tax</label>
+            <input style="width: 290px;" type="text" id="InCashFederalTax" placeholder="In Cash Federal Tax">
+    </div>
+
+    <div class="form-row">
+        <label  for="BeneficiaryOption">
+            <i class="icon-tag"></i> Beneficiary </label>     
+        <select style="width: 290px;" id="BeneficiaryOption" placeholder="Beneficiary Option">
+            <option value="" disabled selected>Select beneficiary option</option>
+            <option value="1">Liquidate the entire balance.</option>            
+            <option value="2">Transfer the assets into an IRA in my name</option>
+            <option value="3">Transfer the assets into a beneficiary IRA</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="PaymentMethod">
+            <i class="icon-tag"></i> Payment </label>        
+        <select style="width: 290px;"  id="PaymentMethod" placeholder="Beneficiary Option">
+            <option value="" disabled selected>Select payment method option</option>
+            <option value="1">I would like the distribution to be paid by check...</option>
+            <option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp;(...and sent to the mailing address listed in section 2 of thes form.)</option> 
+            <option value="2">I would like this distribution to be sent via EFT...</option>
+            <option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp;(...to the bank account indicated on the attached preprinted, voided check.)</option> 
+            <option value="3">I would like a one-time distribution to be paid by wire transfer. </option>
+            <option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp;(...Wire the proceeds of this distribution request to the bank account indicated on the attached preprinted, voided check. )</option> 
+            <option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp;(I understand that a wire fee will be deducted from the account balanceI would like a one-time distribution to be paid by wire transfer. )</option> 
+            <option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp;(Wire the proceeds of this distribution request to the bank account indicated on the attached preprinted, voided check. )</option> 
+            <option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp;(I understand that a wire fee will be deducted from the account balance. )</option> 
+            <option value="4">I would like the distribution to be paid by check and mailed to the temporary address listed below. </option>
+        </select>
+    </div>
+
+    <div class="form-row" style="background-color: rgb(233, 240, 240); border-radius: 10px">
+        <label style="width: 100%; text-align: center; padding-top: 5px;">Payment Method Details</label>
+    </div>
+
+    <div class="form-row">
+        <label  for="PaymentMethodAddress">
+            <i class="icon-tag"></i> Address </label>
+        <input style="width: 290px;" type="text" id="PaymentMethodAddress" placeholder="Payment Method Address">
+    </div>
+    <div class="form-row">
+        <label  for="PaymentMethodCity">
+            <i class="icon-tag"></i> City </label>
+        <input style="width: 290px;" type="text" id="PaymentMethodCity" placeholder="Payment Method City">
+    </div>
+    <div class="form-row">
+        <label  for="PaymentMethodState">
+            <i class="icon-tag"></i>  State </label>
+        <input style="width: 290px;" type="text" id="PaymentMethodState" placeholder="Payment Method State">
+    </div>
+    <div class="form-row">
+        <label  for="PaymentMethodZipCode">
+            <i class="icon-tag"></i> Zip Code </label>
+        <input style="width: 290px;" type="text" id="PaymentMethodZipCode" placeholder="Payment Method Zip Code">
+    </div>
+
+    <div class="form-row" style="background-color: rgb(233, 240, 240); border-radius: 10px">
+            <label style="width: 500px; text-align: center; padding-top: 5px;">Exception Handling</label>
+    </div>
+
+    <div class="form-row">
+            <label  for="Action">
+                <i class="icon-tag"></i> Action </label>     
+            <select style="width: 290px;" id="Action">
+                <option value="" disabled selected>Select Action</option>
+                <option value="Halt">Halt</option>            
+                <option value="Continue">Continue</option>           
+            </select>
+        </div>
+
+    <div class="form-row">
+                <label for="RetryCount">
+                    <i class="icon-tag"></i> Retry Count </label>     
+                <select style="width: 290px;" id="RetryCount">
+                    <option value="" disabled selected>Select Retry Count</option>
+                    <option value="1">1</option>            
+                    <option value="2">2</option>     
+                    <option value="3">3</option>      
+                </select>
+    </div>
+    <hr>
+    <div class="form-row">
+            <label style="width: 130px;" for="ActionTimeOut">
+                <i class="icon-tag"></i> Action Time Out </label>
+            <input style="width: 60px;" type="number" id="ActionTimeOut" placeholder="Action Time Out">
+            <label>Minutes</label>        
+    </div>

@@ -1,0 +1,177 @@
+<style>
+    .ShowErrorTextbox {
+        border-color: red !Important;
+    }
+</style>
+
+   
+    <!-- 
+        <div class="form-row">
+            <label for="node-input-OCREngine" style="width:200px;">
+                <i class="icon-tag"></i> OCR Engine </label>
+            <select style="width: 250px;" id="node-input-OCREngine">
+                <option value="Tesserect" selected>Tesseract</option>
+                <option value="IronOCR">IronOcr</option>
+                <option value="Kofax">Kofax</option>
+            </select>
+        </div> -->
+
+    <div class="form-row">
+        <label style="width: 126px;" for="node-input-templatepath">
+            <i class="icon-tag"></i> Template Path </label>
+        <input type="text" id="TemplatePath" readonly="readonly" placeholder="Template Path" style="width:205px;">
+        <input type="button" class="ui-button ui-widget ui-state-default" onclick="openFileDialog()" style="width:40px" value="...">
+        <input type="file" accept="image/*" style="display: none" onchange="getFilePath()" name="templateFileUploader" id="templateFileUploader">
+    </div>
+    <div class="form-row" style="margin-left:130px;">
+        <input type="button" id="btnTagField" value="Tag Fields" onclick="getCoordinates()" disabled="disabled" style="width:247px">
+        <input type="hidden" name="GUID" id="GUID" />
+        <input type="hidden" name="imageAngle" id="imageAngle" />
+    </div>
+
+    <div class="form-row">
+        <label style="width: 200px;" for="coordinatejson">
+            <!-- <i class="icon-tag"></i> Coordinates JSON </label> -->
+            <br>
+            <input type="text" name="CoordinatesJSON" id="CoordinatesJSON" style="width:450px; display:none" readonly="readonly" />
+    </div>
+
+    <div class="form-row" style="background-color: rgb(233, 240, 240); border-radius: 10px">
+        <label style="width: 500px; text-align: center; padding-top: 5px;">Exception Handling</label>
+    </div>
+
+    <div class="form-row">
+        <label for="Action">
+            <i class="icon-tag"></i> Action </label>
+        <select style="width: 290px;" id="Action">
+            <option value="" disabled selected>Select Action</option>
+            <option value="Halt">Halt</option>
+            <option value="Continue">Continue</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="RetryCount">
+            <i class="icon-tag"></i> Retry Count </label>
+        <select style="width: 290px;" id="RetryCount">
+            <option value="" disabled selected>Select Retry Count</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+    </div>
+    <hr>
+    <div class="form-row">
+        <label style="width: 130px;" for="ActionTimeOut">
+            <i class="icon-tag"></i> Action Time Out </label>
+        <input style="width: 60px;" type="number" id="ActionTimeOut" placeholder="Action Time Out">
+        <label>Minutes</label>
+    </div>
+
+<script>
+    function getCoordinates() {
+        var imgFileID = document.getElementById("GUID").value;  // GUID     
+        var ImgAngle = document.getElementById("imageAngle").value   // Angle        
+
+        if (imgFileID != null && imgFileID != "") {
+            loadJSONData(imgFileID);
+            var url = ".\\nodeProperty\\OCREditor\\OcrEditor.html?id=" + imgFileID + "&_angle=" +ImgAngle;
+            var myWindow = window.open(url, "Image", "width=screen.width,height=screen.height,type=fullWindow,fullscreen=yes,resizable=1");
+        } else {
+            document.getElementById("TemplatePath").classList.add("ShowErrorTextbox");
+            document.getElementById("TemplatePath").value = "";
+        }
+    }
+
+    function openFileDialog() {
+        document.getElementById("TemplatePath").classList.remove("ShowErrorTextbox");
+        document.getElementById("templateFileUploader").click();
+    }
+
+    function getFilePath() {
+        var fileUploader = document.getElementById("templateFileUploader");
+        document.getElementById("btnTagField").setAttribute("disabled","disabled");
+        var extArray = ["jpg", "png"];
+        if (typeof fileUploader != "undefined" && fileUploader.files.length > 0) {
+            var fileName = fileUploader.files[0].name;
+            var fileExt = fileName.substr(fileName.toString().lastIndexOf('.') + 1, 4);
+            if (fileExt != "" && extArray.indexOf(fileExt.toLowerCase()) != -1) {
+                document.getElementById("TemplatePath").value = fileUploader.files[0].name;
+                UploadOCRFileToServer();
+            } else {
+                document.getElementById("TemplatePath").classList.add("ShowErrorTextbox");
+                document.getElementById("TemplatePath").value = "";
+            }
+        }
+    }
+
+    window.addEventListener('message', function (e) {
+        document.getElementById("CoordinatesJSON").value = e.data;
+        console.log(e.data);
+    }, false);
+
+    document.onload = OnLoadComplete();
+
+    function OnLoadComplete() {
+        setTimeout(function () {
+            var GUID = document.getElementById("GUID").value;
+            if (GUID != "") {
+                document.getElementById("btnTagField").removeAttribute("disabled");
+            }
+        }, 1000);
+
+    }
+
+    function UploadOCRFileToServer() {
+        var createdFile = document.getElementById("templateFileUploader").files[0];
+        if (typeof createdFile != "undefined" && createdFile != null) {
+            var reader = new FileReader();
+            reader.onloadend = function (result) {
+                var fileData = '';
+                var byteArray = new Uint8Array(result.target.result)
+                var url =configuration.WCFUrl+"/OCROperations.svc/UploadStream";// 'http://172.20.202.63:5000/OCROperations.svc/UploadStream';
+                var xhr = new XMLHttpRequest();
+                xhr.crossDomain = true;
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('Content-type', 'text/plain');
+                xhr.onload = function () {
+                    var response = xhr.responseText;
+                    response = response.replace(/"/g, "");
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var respObj = response.split(":");
+                        document.getElementById("GUID").value = respObj[0];
+                        document.getElementById("imageAngle").value = respObj[1];
+                        document.getElementById("btnTagField").removeAttribute("disabled");
+                    }
+                }
+                xhr.send(byteArray);
+            };
+            reader.readAsArrayBuffer(createdFile);
+        }
+    }
+
+    function urltoFile(url, filename, mimeType) {
+        return (fetch(url)
+            .then(function (res) { return res.arrayBuffer(); })
+            .then(function (buf) { return new File([buf], filename, { type: mimeType }); })
+        );
+    }
+
+    function loadJSONData(GUID) {
+        var txtJSON = document.getElementById("CoordinatesJSON").value;
+        if (txtJSON != null && txtJSON != "")
+            localStorage.setItem(GUID, txtJSON);
+    }
+
+        /*function GetImgFileID() {
+            var imgFileID = 0;
+            if (localStorage.length > 0) {
+                $.each(localStorage, function (index, item) {
+                    if (index.toString().indexOf("imgFile") != -1) {
+                        imgFileID = index.toString().replace("imgFile", "");
+                    }
+                })
+            }
+            return imgFileID == "" ? 1 : imgFileID;
+        }*/
+</script>

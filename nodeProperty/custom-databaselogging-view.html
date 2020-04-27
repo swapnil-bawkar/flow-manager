@@ -1,0 +1,75 @@
+
+
+        <div class="form-row">
+                <label for="node-input-name">
+                    <i class="icon-tag"></i> Action </label>
+                <input type="text" disabled="disabled" id="node-input-name" placeholder="Action">
+            </div>
+            <div class="form-row">
+                <label for="node-input-label">
+                    <i class="icon-tag"></i> Label </label>
+                <input type="text" id="node-input-label" placeholder="Label">
+            </div>
+
+            <div class="form-row">             
+                <label for="node-input-Driver"><i class="icon-tag"></i>Database Driver</label>      
+                <select style="width: 337px;" id="node-input-Driver">
+                 <option value="" disabled selected>Select Driver</option>
+                 <option value="0">SQL Server</option>            
+                 <option value="1">Oracle Server</option>  
+                 <option value="2">mongodb</option>           
+             </select>
+             </div>   
+             <div class="form-row">             
+                <label for="node-input-Server"><i class="icon-tag"></i> Server </label>
+                <input type="text" id="node-input-Server" placeholder="Server Name">
+             </div>
+             <div class="form-row">             
+                <label for="node-input-DataBase"><i class="icon-tag"></i> DataBase </label>
+                <input type="text" id="node-input-DataBase" placeholder="DataBase">
+             </div>
+             <div class="form-row">             
+                 <label for="node-input-Uid"><i class="icon-tag"></i> User id </label>
+                 <input type="text" id="node-input-Uid" placeholder="User id">
+              </div>
+              <div class="form-row">             
+                 <label for="node-input-Pwd"><i class="icon-tag"></i> Password </label>
+                 <input type="text" id="node-input-Pwd" placeholder="Password">
+              </div>
+              <div class="form-row">             
+                 <label for="node-input-Port"><i class="icon-tag"></i> Port </label>
+                 <input type="text" id="node-input-Port" placeholder="Mongodb Port">
+              </div>
+    
+    <div class="form-row" style="background-color: rgb(233, 240, 240); border-radius: 10px">
+            <label style="width: 500px; text-align: center; padding-top: 5px;">Exception Handling</label>
+    </div>
+
+    <div class="form-row">
+            <label for="node-input-Action">
+                <i class="icon-tag"></i> Action </label>     
+            <select style="width: 337px;" id="node-input-Action">
+                <option value="" disabled selected>Select Action</option>
+                <option value="Halt">Halt</option>            
+                <option value="Continue">Continue</option>           
+            </select>
+        </div>
+
+    <div class="form-row">
+                <label for="node-input-RetryCount">
+                    <i class="icon-tag"></i> Retry Count </label>     
+                <select style="width: 337px;" id="node-input-RetryCount">
+                    <option value="" disabled selected>Select Retry Count</option>
+                    <option value="1">1</option>            
+                    <option value="2">2</option>     
+                    <option value="3">3</option>      
+                </select>
+    </div>
+    <hr>
+    <div class="form-row">
+            <label style="width: 130px;" for="node-input-ActionTimeOut">
+                <i class="icon-tag"></i> Action Time Out </label>
+            <input style="width: 60px;" type="number" id="node-input-ActionTimeOut" placeholder="Action Time Out">
+            <label>Minutes</label>        
+    </div>
+

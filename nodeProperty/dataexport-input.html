@@ -1,0 +1,98 @@
+<script type='text/javascript'>
+    RED.nodes.registerType('dataexport-input', {
+        category: 'Data Input',
+        color: '#87A980',
+        defaults: getDefaultJson(),
+        inputs: 0,
+        outputs: 1,
+        icon: 'arrow-in.png',
+        label: function () {
+            return this.name || 'dataexport-input';
+        }
+    });
+
+    addScript();
+
+    function getDefaultJson() {
+        return {
+            name: { value: 'dataexport-input', },
+            label: { value: '' },
+            Type: { value: '' },
+            Command: { value: '' }
+
+        }
+    }
+
+    function addScript() {
+        var noderedScripts = '';
+
+        noderedScripts += '<div class="form-row">';
+        noderedScripts += '<label for="name"><i class="icon-tag"></i> Name </label>';
+        noderedScripts += '<input type="text" disabled="disabled" id="name" placeholder="Name">';
+        noderedScripts += '</div>';
+
+        noderedScripts += '<div class="form-row">';
+        noderedScripts += '<label for="label">';
+        noderedScripts += '<i class="icon-tag"></i> Label </label>';
+        noderedScripts += '<input type="text" id="label" placeholder="Label">';
+        noderedScripts += '</div>';
+
+        noderedScripts += '<div class="form-row"><label for="Type"><i class="icon-tag"></i> Type </label>';
+        noderedScripts += '<select style="width: 290px;" id="Type" name="Type">';
+        noderedScripts += '<option value="" disabled selected>Select Type</option>';
+        noderedScripts += '<option value="PowerShell">Power Shell</option>';
+        noderedScripts += '<option value="BatchFile">Batch File</option><option value="Script">Script</option></select></div>';
+
+        noderedScripts += '<div class="form-row">';
+        noderedScripts += '<label for="Command"><i class="icon-tag"></i> Excel Path </label>';
+        noderedScripts += '<input type="text" name="Command" id="Command"/>'
+        // noderedScripts += '<input type="text" id="url" placeholder="Data Path">';
+        noderedScripts += '</div>';
+
+        noderedScripts += '<div class="form-row" style="background-color: rgb(233, 240, 240); border-radius: 10px">';
+        noderedScripts += '<label style="width: 500px; text-align: center; padding-top: 5px;">Exception Handling</label>';
+        noderedScripts += '</div>';
+
+
+        noderedScripts += '<div class="form-row">';
+        noderedScripts += '<label  for="Action">';
+        noderedScripts += '<i class="icon-tag"></i> Action </label>';
+        noderedScripts += '<select style="width: 321px;" id="Action">';
+        noderedScripts += '<option value="" disabled selected>Select Action</option>';
+        noderedScripts += '<option value="Halt">Halt</option>  ';
+        noderedScripts += '<option value="Continue">Continue</option> ';
+        noderedScripts += '</select>';
+        noderedScripts += '</div>';
+
+        noderedScripts += '<div class="form-row">';
+        noderedScripts += '<label for="RetryCount">';
+        noderedScripts += '<i class="icon-tag"></i> Retry Count </label>';
+        noderedScripts += '<select style="width: 321px;" id="RetryCount">';
+        noderedScripts += '<option value="" disabled selected>Select Retry Count</option>';
+        noderedScripts += '<option value="1">1</option>';
+        noderedScripts += '<option value="2">2</option>';
+        noderedScripts += '<option value="3">3</option>';
+        noderedScripts += '</select>';
+        noderedScripts += '</div>';
+
+        noderedScripts += '<hr>';
+        noderedScripts += '<div class="form-row">';
+        noderedScripts += '<label style="width: 130px;" for="ActionTimeOut">';
+        noderedScripts += '<i class="icon-tag"></i> Action Time Out </label>';
+        noderedScripts += '<input style="width: 60px;" type="number" id="ActionTimeOut" placeholder="Action Time Out">';
+        noderedScripts += '<label>Minutes</label>';
+        noderedScripts += '</div>';
+        noderedScripts += '</div>';
+
+        var s = document.createElement('script');
+        s.setAttribute('type', "text/x-red");
+        s.setAttribute('data-template-name', 'dataexport-input');
+        s.innerHTML = noderedScripts;
+        document.body.appendChild(s);
+    }
+
+</script>
+
+<script type='text/x-red' data-help-name='dataexport-input'>
+    <p>A node which allows us multiple data input by uploading excel, xml and csv files</p>
+</script>
